@@ -1,0 +1,5 @@
+polars==1.44.2
+azure-storage-blob==12.30.2
+fsspec
+adlfs
+python-dotenv
