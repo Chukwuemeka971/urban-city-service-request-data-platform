@@ -169,6 +169,32 @@ def transform_data(df: pl.DataFrame) -> pl.DataFrame:
     )
 
     # --------------------------------------------------
+    # Convert timestamps to milliseconds
+    # --------------------------------------------------
+    #
+    # Polars may write datetime values as TIMESTAMP_MICROS
+    # in Parquet. Azure Data Factory does not support that
+    # timestamp type for this PostgreSQL mapping.
+    #
+    # Convert to milliseconds so ADF can read the Parquet
+    # timestamp correctly.
+    # --------------------------------------------------
+
+    logger.info(
+        "Converting timestamps to millisecond precision"
+    )
+
+    df_refined = df_refined.with_columns(
+        [
+            pl.col("created_date")
+            .dt.cast_time_unit("ms"),
+
+            pl.col("closed_date")
+            .dt.cast_time_unit("ms"),
+        ]
+    )
+
+    # --------------------------------------------------
     # Clean text columns
     # --------------------------------------------------
 
@@ -189,8 +215,7 @@ def transform_data(df: pl.DataFrame) -> pl.DataFrame:
 
     df_refined = df_refined.with_columns(
         [
-            pl.col(column)
-            .str.strip_chars()
+            pl.col(column).str.strip_chars()
             for column in text_columns
         ]
     )
@@ -486,22 +511,38 @@ def transform() -> None:
         )
 
     try:
+
+        # --------------------------------------------------
         # Read
+        # --------------------------------------------------
+
         source_df = read_bronze()
 
+        # --------------------------------------------------
         # Validate source
+        # --------------------------------------------------
+
         validate_source_columns(source_df)
 
+        # --------------------------------------------------
         # Transform
+        # --------------------------------------------------
+
         silver_df = transform_data(source_df)
 
+        # --------------------------------------------------
         # Validate Silver
+        # --------------------------------------------------
+
         validate_transformed_data(
             silver_df,
             source_df,
         )
 
+        # --------------------------------------------------
         # Write
+        # --------------------------------------------------
+
         write_silver(silver_df)
 
         logger.info(
