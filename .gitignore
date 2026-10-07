@@ -8,6 +8,8 @@ airflow_settings.yaml
 credentials.sh
 .terraform/
 *.hcl
+docs/
+terraform/notes.md
 
 # Terraform secrets
 terraform/secrets.tfvars

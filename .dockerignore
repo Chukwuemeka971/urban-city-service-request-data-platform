@@ -6,3 +6,17 @@ logs/
 .venv
 airflow.db
 airflow.cfg
+credentials.sh
+*.backup
+docs/
+terraform/notes.md
+
+# Terraform secrets
+terraform/secrets.tfvars
+
+# Terraform state
+terraform/*.tfstate
+terraform/*.tfstate.*
+
+# Local Azure credentials
+credentials.txt
