@@ -5,3 +5,16 @@ __pycache__/
 *.pyc
 .astro
 airflow_settings.yaml
+credentials.sh
+.terraform/
+*.hcl
+
+# Terraform secrets
+terraform/secrets.tfvars
+
+# Terraform state
+terraform/*.tfstate
+terraform/*.tfstate.*
+
+# Local Azure credentials
+credentials.txt
